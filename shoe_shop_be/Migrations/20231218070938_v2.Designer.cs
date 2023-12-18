@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using shoe_shop_be.Data;
 
@@ -11,9 +12,10 @@ using shoe_shop_be.Data;
 namespace shoe_shop_be.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231218070938_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,7 +65,7 @@ namespace shoe_shop_be.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Brands", b =>
@@ -78,7 +80,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
 
                     b.HasData(
                         new
@@ -110,7 +112,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Colors", (string)null);
+                    b.ToTable("Colors");
 
                     b.HasData(
                         new
@@ -153,7 +155,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("SizeId");
 
-                    b.ToTable("DetailProducts", (string)null);
+                    b.ToTable("DetailProducts");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Images", b =>
@@ -173,7 +175,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Likes", b =>
@@ -194,7 +196,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Likes", (string)null);
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.News", b =>
@@ -220,7 +222,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("News", (string)null);
+                    b.ToTable("News");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.OrderDetails", b =>
@@ -247,7 +249,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Orders", b =>
@@ -300,7 +302,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("ShipId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Product", b =>
@@ -342,7 +344,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Promotions", b =>
@@ -372,7 +374,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Promotions", (string)null);
+                    b.ToTable("Promotions");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.RatingImages", b =>
@@ -392,7 +394,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("RatingId");
 
-                    b.ToTable("RatingImages", (string)null);
+                    b.ToTable("RatingImages");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Ratings", b =>
@@ -420,7 +422,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Ships", b =>
@@ -442,7 +444,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ships", (string)null);
+                    b.ToTable("Ships");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Sizes", b =>
@@ -457,7 +459,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sizes", (string)null);
+                    b.ToTable("Sizes");
 
                     b.HasData(
                         new
@@ -510,7 +512,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Accounts", b =>

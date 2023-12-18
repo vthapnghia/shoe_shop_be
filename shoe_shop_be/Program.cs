@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using shoe_shop_be.Data;
+using shoe_shop_be.Helpers;
 using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
+using shoe_shop_be.Middleware;
+using shoe_shop_be.Repositories;
 using shoe_shop_be.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,10 +21,13 @@ builder.Services.AddDbContext<DataContext>(opt =>
 });
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IAccountRepository, IAccountRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddAutoMapper(typeof (Program));
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

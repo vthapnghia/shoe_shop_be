@@ -9,9 +9,9 @@ namespace shoe_shop_be.Repositories
     {
         public AccountRepository(DataContext dataContex): base(dataContex) { }
 
-        public async Task<bool> GetByEmail(string email)
+        public async Task<Accounts?> GetByEmail(string email)
         {
-            return (await _dataContext.Accounts.Where(a => a.Email == email).FirstOrDefaultAsync()) == null;
+            return await _dataContext.Accounts.Where(a => a.Email == email).FirstOrDefaultAsync();
         }
     }
 }

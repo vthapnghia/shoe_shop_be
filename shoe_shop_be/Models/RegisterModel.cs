@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace shoe_shop_be.RequestModels
+namespace shoe_shop_be.Models
 {
-    public class RequestAccountModel
+    public class RegisterModel
     {
         [Required]
         public string Email { get; set; }

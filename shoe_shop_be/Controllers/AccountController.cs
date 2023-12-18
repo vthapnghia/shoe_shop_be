@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using shoe_shop_be.Interfaces.IRepositories;
+﻿using Microsoft.AspNetCore.Mvc;
 using shoe_shop_be.Interfaces.IServices;
-using shoe_shop_be.RequestModels;
+using shoe_shop_be.Models;
 
 namespace shoe_shop_be.Controllers
 {
@@ -18,15 +14,30 @@ namespace shoe_shop_be.Controllers
         {
             _accountService = accountService;
         }
-        public async Task<ActionResult> Register(RequestAccountModel requestAccountModel)
+
+        [HttpPost("register")]
+        public async Task<ActionResult> Register(RegisterModel registerModel)
         {
-            try
+
+            var account = await _accountService.Register(registerModel);
+            if (account == null)
             {
-                return await _accountService.Register(requestAccountModel);
-            }catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
+                return BadRequest("Email is exist");
             }
+            return Ok(account?.Email);
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(LoginModel loginModel)
+        {
+
+
+            var account = await _accountService.Login(loginModel);
+            if (account == null)
+            {
+                return BadRequest("Email is not exist");
+            }
+            return Ok(account);
         }
     }
 }

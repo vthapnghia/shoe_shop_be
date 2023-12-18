@@ -3,6 +3,6 @@
 namespace shoe_shop_be.Interfaces.IRepositories
 {
     public interface IAccountRepository : GenericRepository<Accounts>{
-        Task<bool> GetByEmail(string email);
+        Task<Accounts?> GetByEmail(string email);
     }
 }
