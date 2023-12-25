@@ -108,5 +108,55 @@ namespace shoe_shop_be.Services
             }
             return false;
         }
+
+        public async Task<AccountsDto> ResetPassword(ResetPasswordModel resetPasswordModel)
+        {
+            var account = await _accountRepository.GetByEmail(resetPasswordModel.Email);
+            AccountsDto accountsDto = new AccountsDto();
+            accountsDto.Email = resetPasswordModel.Email;
+            if (account == null || !account.IsActive)
+            {
+                accountsDto.Email = resetPasswordModel.Email;
+                accountsDto.StatusCode = 400;
+                accountsDto.StatusMessage = "Email is not exist";
+                return accountsDto;
+            }
+            var secret = new Random().Next(100000, 999999).ToString();
+            MailData mailData = new MailData()
+            {
+                EmailToId = account.Email,
+                EmailToName = account.Email,
+                EmailSubject = "Shoes shop verify email",
+                EmailBody = "Mã đặt lại mật khẩu của bạn ở shoeShop là: " + secret,
+            };
+
+            if (!_mailService.SendMail(mailData))
+            {
+                accountsDto.StatusCode = 500;
+                accountsDto.StatusMessage = "Send mail is fail";
+                return accountsDto;
+            }
+            account.Secret = secret;
+            _accountRepository.Update(account);
+            await _accountRepository.SaveChange();
+            var accountDtoRes = _mapper.Map<AccountsDto>(account);
+            accountDtoRes.StatusCode = 200;
+            accountDtoRes.StatusMessage = "";
+            return accountDtoRes;
+        }
+
+        public async Task<bool> VerifyResetPassword(VerifyRegisterPasswordModel verifyRegisterPasswordModel)
+        {
+            var account = await _accountRepository.GetByEmail(verifyRegisterPasswordModel.Email);
+            if (account != null && account.Secret == verifyRegisterPasswordModel.Secret)
+            {
+                var salt = BCrypt.Net.BCrypt.GenerateSalt();
+                account.Password = BCrypt.Net.BCrypt.HashPassword(verifyRegisterPasswordModel.Password, salt);
+                _accountRepository.Update(account);
+                await _accountRepository.SaveChange();
+                return true;
+            }
+            return false;
+        }
     }
 }

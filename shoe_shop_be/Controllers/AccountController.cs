@@ -49,5 +49,27 @@ namespace shoe_shop_be.Controllers
             }
             return Ok(res);
         }
+
+        [HttpPost("resetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
+        {
+            var res = await _accountService.ResetPassword(resetPasswordModel);
+            if(res.StatusCode != 200)
+            {
+                return BadRequest(res.StatusMessage);
+            }
+            return Ok(res);
+        }
+
+        [HttpPost("resetPassword/verify")]
+        public async Task<IActionResult> VerifyResetPassword(VerifyRegisterPasswordModel verifyRegisterPasswordModel)
+        {
+            var res = await _accountService.VerifyResetPassword(verifyRegisterPasswordModel);
+            if (res)
+            {
+                return BadRequest("Lỗi");
+            }
+            return Ok("Reset password is success");
+        }
     }
 }

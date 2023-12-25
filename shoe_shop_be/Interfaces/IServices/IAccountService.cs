@@ -8,5 +8,7 @@ namespace shoe_shop_be.Interfaces.IServices
         Task<AccountsDto> Register(RegisterModel requestAccountModel);
         Task<bool> Verify(VerifyModel verifyModel, string id);
         Task<LoginResponseModel> Login(LoginModel loginModel);
+        Task<AccountsDto> ResetPassword(ResetPasswordModel resetPasswordModel);
+        Task<bool> VerifyResetPassword(VerifyRegisterPasswordModel verifyRegisterPasswordModel);
     }
 }
