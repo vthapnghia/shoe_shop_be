@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using shoe_shop_be.DTO;
 using shoe_shop_be.Interfaces.IServices;
 using shoe_shop_be.Models;
 
 namespace shoe_shop_be.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -16,28 +17,37 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(RegisterModel registerModel)
+        public async Task<IActionResult> Register(RegisterModel registerModel)
         {
 
-            var account = await _accountService.Register(registerModel);
-            if (account == null)
+            AccountsDto accountsDto = await _accountService.Register(registerModel);
+            if (accountsDto.StatusCode != 200)
             {
-                return BadRequest("Email is exist");
+                return BadRequest(accountsDto.StatusMessage);
             }
-            return Ok(account?.Email);
+            return Ok(accountsDto);
+        }
+
+        [HttpPost("verify/{id}")]
+        public async Task<IActionResult> Verify([FromBody] VerifyModel verifyModel, string id)
+        {
+            var verify = await _accountService.Verify(verifyModel, id);
+            if (!verify)
+            {
+                return BadRequest("Code is incorrect");
+            }
+            return Ok("Verify is success");
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginModel loginModel)
+        public async Task<IActionResult> Login(LoginModel loginModel)
         {
-
-
-            var account = await _accountService.Login(loginModel);
-            if (account == null)
+            var res = await _accountService.Login(loginModel);
+            if (res.StatusCode != 200)
             {
-                return BadRequest("Email is not exist");
+                return BadRequest(res.StatusMessage);
             }
-            return Ok(account);
+            return Ok(res);
         }
     }
 }

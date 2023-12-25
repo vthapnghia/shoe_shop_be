@@ -1,11 +1,11 @@
-﻿using shoe_shop_be.Helpers;
+﻿using shoe_shop_be.Entities;
+using shoe_shop_be.Helpers;
 
-namespace shoe_shop_be.Entities
+namespace shoe_shop_be.DTO
 {
-    public class User
+    public class UserDto
     {
         public Guid Id { get; set; }
-        public Accounts Accounts { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Age { get; set; }
         public Gender Gender { get; set; }

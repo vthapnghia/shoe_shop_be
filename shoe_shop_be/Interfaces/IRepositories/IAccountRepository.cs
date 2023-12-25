@@ -2,7 +2,7 @@
 
 namespace shoe_shop_be.Interfaces.IRepositories
 {
-    public interface IAccountRepository : GenericRepository<Accounts>{
+    public interface IAccountRepository : IGenericRepository<Accounts>{
         Task<Accounts?> GetByEmail(string email);
     }
 }

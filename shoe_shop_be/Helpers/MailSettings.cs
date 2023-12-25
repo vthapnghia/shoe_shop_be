@@ -1,10 +1,11 @@
 ﻿namespace shoe_shop_be.Helpers
 {
-    public class EmailConfiguration
+    public class MailSettings
     {
-        public string From { get; set; }
-        public string SmtpServer { get; set; }
+        public string Server { get; set; }
         public int Port { get; set; }
+        public string SenderName { get; set; }
+        public string SenderEmail { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
     }

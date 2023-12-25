@@ -4,7 +4,7 @@ using shoe_shop_be.Interfaces.IRepositories;
 
 namespace shoe_shop_be.Repositories
 {
-    public class GenericRepository<T> : Interfaces.IRepositories.GenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly DataContext _dataContext;
         public GenericRepository(DataContext dataContext) 

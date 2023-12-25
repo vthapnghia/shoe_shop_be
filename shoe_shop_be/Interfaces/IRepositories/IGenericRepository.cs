@@ -1,6 +1,6 @@
 ﻿namespace shoe_shop_be.Interfaces.IRepositories
 {
-    public interface GenericRepository<T>
+    public interface IGenericRepository<T>
     {
         public IQueryable<T> Get();
         public Task<IEnumerable<T>> GetAll();

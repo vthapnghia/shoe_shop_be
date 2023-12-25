@@ -4,7 +4,7 @@ namespace shoe_shop_be.Entities
 {
     public class Accounts: ICreatedAt
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid? UserId { get; set; }
         public User? User { get; set; }
         public string Email { get; set; }

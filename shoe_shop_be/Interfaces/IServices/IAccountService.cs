@@ -5,7 +5,8 @@ namespace shoe_shop_be.Interfaces.IServices
 {
     public interface IAccountService
     {
-        Task<AccountsDto?> Register(RegisterModel requestAccountModel);
-        Task<AccountsDto?> Login(LoginModel loginModel);
+        Task<AccountsDto> Register(RegisterModel requestAccountModel);
+        Task<bool> Verify(VerifyModel verifyModel, string id);
+        Task<LoginResponseModel> Login(LoginModel loginModel);
     }
 }
