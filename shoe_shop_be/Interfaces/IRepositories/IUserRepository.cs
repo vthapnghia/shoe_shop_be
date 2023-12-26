@@ -2,6 +2,6 @@
 
 namespace shoe_shop_be.Interfaces.IRepositories
 {
-    public interface IUserrepository : IGenericRepository<User> { 
+    public interface IUserRepository : IGenericRepository<User> { 
     }
 }

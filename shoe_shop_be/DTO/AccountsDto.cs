@@ -9,7 +9,5 @@ namespace shoe_shop_be.DTO
         public bool IsAdmin { get; set; } = false;
         public bool IsActive { get; set; } = false;
         public bool IsSeller { get; set; } = false;
-        public int StatusCode { get; set; }
-        public string StatusMessage { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using shoe_shop_be.DTO;
 using shoe_shop_be.Models;
+using System.Threading.Tasks;
 
 namespace shoe_shop_be.Interfaces.IServices
 {
@@ -10,5 +11,7 @@ namespace shoe_shop_be.Interfaces.IServices
         Task<LoginResponseModel> Login(LoginModel loginModel);
         Task<AccountsDto> ResetPassword(ResetPasswordModel resetPasswordModel);
         Task<bool> VerifyResetPassword(VerifyRegisterPasswordModel verifyRegisterPasswordModel);
+        Task<LoginResponseModel> LoginAdmin(LoginModel loginModel);
+        Task<LoginResponseModel> LoginGoogle(LoginGoogleModel loginGoogleModel);
     }
 }

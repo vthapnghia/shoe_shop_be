@@ -22,6 +22,13 @@ namespace shoe_shop_be.Middleware
             {
                 await _next(context);
             }
+            catch (ApiException e)
+            {
+                context.Response.StatusCode = e.StatusCode;
+                var option = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                var json = JsonSerializer.Serialize(new { StatusMessage = e.Message }, option);
+                await context.Response.WriteAsync(json);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);

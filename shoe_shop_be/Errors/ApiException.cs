@@ -1,6 +1,6 @@
 ﻿namespace shoe_shop_be.Errors
 {
-    public class ApiException
+    public class ApiException: Exception
     {
         public ApiException(int statusCode, string message, string details)
         {

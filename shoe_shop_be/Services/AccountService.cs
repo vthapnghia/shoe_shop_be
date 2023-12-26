@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using shoe_shop_be.DTO;
 using shoe_shop_be.Entities;
+using shoe_shop_be.Errors;
 using shoe_shop_be.Helpers;
 using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
@@ -15,14 +17,14 @@ namespace shoe_shop_be.Services
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
-        private readonly IUserrepository _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
 
         public AccountService(
-            IAccountRepository accountRepository, 
-            IMapper mapper, 
-            IMailService mailService, 
-            IUserrepository userRepository, 
+            IAccountRepository accountRepository,
+            IMapper mapper,
+            IMailService mailService,
+            IUserRepository userRepository,
             ITokenService tokenService)
         {
             _accountRepository = accountRepository;
@@ -34,13 +36,9 @@ namespace shoe_shop_be.Services
         public async Task<AccountsDto> Register(RegisterModel registerModel)
         {
             var accountExist = await _accountRepository.GetByEmail(registerModel.Email);
-            AccountsDto accountsDto = new AccountsDto();
-            accountsDto.Email = registerModel.Email;
             if (accountExist != null)
             {
-                accountsDto.StatusCode = 400;
-                accountsDto.StatusMessage = "Email is exist";
-                return accountsDto;
+                throw new ApiException(400, "Email is exist", "");
             }
             Accounts account = new Accounts();
             account.Email = registerModel.Email;
@@ -58,42 +56,30 @@ namespace shoe_shop_be.Services
 
             if (!_mailService.SendMail(mailData))
             {
-                accountsDto.StatusCode = 500;
-                accountsDto.StatusMessage = "Send mail is fail";
-                return accountsDto;
+                throw new ApiException(500, "Send mail is fail", "");
             }
             await _accountRepository.Insert(account);
             await _accountRepository.SaveChange();
-            var accountDtoRes = _mapper.Map<AccountsDto>(account);
-            accountDtoRes.StatusCode = 200;
-            accountDtoRes.StatusMessage = "Register is success";
-            return accountDtoRes;
+            var accountDto = _mapper.Map<AccountsDto>(account);
+            return accountDto;
         }
 
         public async Task<LoginResponseModel> Login(LoginModel loginModel)
         {
             var accountExist = await _accountRepository.GetByEmail(loginModel.Email);
-            LoginResponseModel loginResponseModel = new LoginResponseModel();
             if (accountExist == null)
             {
-                loginResponseModel.User = new UserDto();
-                loginResponseModel.StatusCode = 400;
-                loginResponseModel.StatusMessage = "Email is not exist";
-                return loginResponseModel;
+                throw new ApiException(400, "Email is not exist", "");
             }
             bool hashedPasswordToCheck = BCrypt.Net.BCrypt.Verify(loginModel.Password, accountExist.Password);
             if (!hashedPasswordToCheck)
             {
-                loginResponseModel.User = new UserDto();
-                loginResponseModel.StatusCode = 400;
-                loginResponseModel.StatusMessage = "Password is incorrect";
-                return loginResponseModel;
+                throw new ApiException(400, "Password is incorrect", "");
             }
             var user = await _userRepository.GetById(accountExist.UserId);
+            LoginResponseModel loginResponseModel = new LoginResponseModel();
             loginResponseModel.User = _mapper.Map<UserDto>(user);
             loginResponseModel.Token = _tokenService.CreateToken(accountExist.Id);
-            loginResponseModel.StatusCode = 200;
-            loginResponseModel.StatusMessage = "Login is success";
             loginResponseModel.IsSeller = accountExist.IsSeller;
             loginResponseModel.IsAdmin = accountExist.IsAdmin;
             return loginResponseModel;
@@ -104,6 +90,9 @@ namespace shoe_shop_be.Services
             var account = await _accountRepository.GetById(Guid.Parse(id));
             if (account != null && account.Secret == verifyModel.Secret)
             {
+                account.IsActive = true;
+                _accountRepository.Update(account);
+                await _accountRepository.SaveChange();
                 return true;
             }
             return false;
@@ -112,14 +101,9 @@ namespace shoe_shop_be.Services
         public async Task<AccountsDto> ResetPassword(ResetPasswordModel resetPasswordModel)
         {
             var account = await _accountRepository.GetByEmail(resetPasswordModel.Email);
-            AccountsDto accountsDto = new AccountsDto();
-            accountsDto.Email = resetPasswordModel.Email;
             if (account == null || !account.IsActive)
             {
-                accountsDto.Email = resetPasswordModel.Email;
-                accountsDto.StatusCode = 400;
-                accountsDto.StatusMessage = "Email is not exist";
-                return accountsDto;
+                throw new ApiException(400, "Email is not exist", "");
             }
             var secret = new Random().Next(100000, 999999).ToString();
             MailData mailData = new MailData()
@@ -132,16 +116,12 @@ namespace shoe_shop_be.Services
 
             if (!_mailService.SendMail(mailData))
             {
-                accountsDto.StatusCode = 500;
-                accountsDto.StatusMessage = "Send mail is fail";
-                return accountsDto;
+                throw new ApiException(500, "Send mail is fail", "");
             }
             account.Secret = secret;
             _accountRepository.Update(account);
             await _accountRepository.SaveChange();
             var accountDtoRes = _mapper.Map<AccountsDto>(account);
-            accountDtoRes.StatusCode = 200;
-            accountDtoRes.StatusMessage = "";
             return accountDtoRes;
         }
 
@@ -157,6 +137,62 @@ namespace shoe_shop_be.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<LoginResponseModel> LoginAdmin(LoginModel loginModel)
+        {
+            var accountExist = await _accountRepository.GetByEmail(loginModel.Email);
+            LoginResponseModel loginResponseModel = new LoginResponseModel();
+            if (accountExist == null || (accountExist.IsAdmin == false && accountExist.IsSeller == false))
+            {
+                throw new ApiException(400, "Email is not exist", "");
+            }
+            bool hashedPasswordToCheck = BCrypt.Net.BCrypt.Verify(loginModel.Password, accountExist.Password);
+            if (!hashedPasswordToCheck)
+            {
+                throw new ApiException(400, "Password is incorrect", "");
+            }
+            var user = await _userRepository.GetById(accountExist.UserId);
+            loginResponseModel.User = _mapper.Map<UserDto>(user);
+            loginResponseModel.Token = _tokenService.CreateToken(accountExist.Id);
+            loginResponseModel.IsSeller = accountExist.IsSeller;
+            loginResponseModel.IsAdmin = accountExist.IsAdmin;
+            return loginResponseModel;
+        }
+
+        public async Task<LoginResponseModel> LoginGoogle(LoginGoogleModel loginGoogleModel)
+        {
+            var accountExist = await _accountRepository.GetByGoogleId(loginGoogleModel.GoogleId);
+            LoginResponseModel loginResponseModel = new LoginResponseModel();
+            if (accountExist == null)
+            {
+                Accounts accounts = new Accounts()
+                {
+                    UserId = null,
+                    User = null,
+                    Email = "",
+                    Password = "",
+                    IsAdmin = false,
+                    IsActive = true,
+                    IsSeller = false,
+                    CreatedAt = null,
+                    Secret = "",
+                    GoogleId = loginGoogleModel.GoogleId,
+                };
+                _accountRepository.Insert(accounts);
+                _accountRepository.SaveChange();
+                loginResponseModel.User = new UserDto();
+                loginResponseModel.Token = _tokenService.CreateToken(accounts.Id);
+                loginResponseModel.IsSeller = false;
+                loginResponseModel.IsAdmin = false;
+                return loginResponseModel;
+            }
+            var user = await _userRepository.GetById(accountExist.UserId);
+            loginResponseModel.User = _mapper.Map<UserDto>(user);
+            loginResponseModel.Token = _tokenService.CreateToken(accountExist.Id);
+            loginResponseModel.IsSeller = false;
+            loginResponseModel.IsAdmin = false;
+            return loginResponseModel;
         }
     }
 }

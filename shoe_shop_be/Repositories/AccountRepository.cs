@@ -13,5 +13,10 @@ namespace shoe_shop_be.Repositories
         {
             return await _dataContext.Accounts.Where(a => a.Email == email).FirstOrDefaultAsync();
         }
+
+        public async Task<Accounts?> GetByGoogleId(string googleId)
+        {
+            return await _dataContext.Accounts.Where(a => a.GoogleId == googleId).FirstOrDefaultAsync();
+        }
     }
 }
