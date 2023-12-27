@@ -4,7 +4,7 @@ namespace shoe_shop_be.Entities
 {
     public class User
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Accounts Accounts { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Age { get; set; }

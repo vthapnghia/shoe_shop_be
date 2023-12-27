@@ -2,8 +2,10 @@
 using shoe_shop_be.DTO;
 using shoe_shop_be.Entities;
 using shoe_shop_be.Errors;
+using shoe_shop_be.Helpers;
 using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
+using System;
 
 namespace shoe_shop_be.Services
 {
@@ -38,7 +40,17 @@ namespace shoe_shop_be.Services
                 }
                 user.Avatar = result.SecureUrl.AbsoluteUri;
             }
-            return new UserModel();
+            user.Address = firstLoginModel.Address;
+            user.Age = firstLoginModel.Age;
+            user.Gender = (Gender)Enum.Parse(typeof(Gender), firstLoginModel.Gender);
+            user.Phone = firstLoginModel.Phone;
+            user.Name = firstLoginModel.Name;
+            account.UserId = user.Id;
+            _userRepository.Insert(user);
+            _accountRepository.Update(account);
+            _userRepository.SaveChange();
+            var userModel = _mapper.Map<UserModel>(user);
+            return userModel;
         }
 
         public async Task<UserModel> GetUser(string id)
