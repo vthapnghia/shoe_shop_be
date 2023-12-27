@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace shoe_shop_be.Models
+namespace shoe_shop_be.DTO
 {
     public class LoginGoogleModel
     {

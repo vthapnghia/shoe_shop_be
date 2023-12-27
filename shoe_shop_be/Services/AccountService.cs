@@ -6,7 +6,6 @@ using shoe_shop_be.Errors;
 using shoe_shop_be.Helpers;
 using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
-using shoe_shop_be.Models;
 using System.Security.Cryptography;
 using System.Text;
 

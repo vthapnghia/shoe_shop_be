@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace shoe_shop_be.Models
+namespace shoe_shop_be.DTO
 {
     public class VerifyModel
     {

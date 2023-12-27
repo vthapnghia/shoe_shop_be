@@ -4,7 +4,6 @@ using shoe_shop_be.Entities;
 using shoe_shop_be.Errors;
 using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
-using shoe_shop_be.Models;
 
 namespace shoe_shop_be.Services
 {

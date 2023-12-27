@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using shoe_shop_be.Data;
 using shoe_shop_be.Helpers;
 using shoe_shop_be.Interfaces.IRepositories;
@@ -6,8 +8,10 @@ using shoe_shop_be.Interfaces.IServices;
 using shoe_shop_be.Middleware;
 using shoe_shop_be.Repositories;
 using shoe_shop_be.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 
@@ -30,6 +34,21 @@ builder.Services.AddAutoMapper(typeof (Program));
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
+var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("SecretKey").Value);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
@@ -42,6 +61,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

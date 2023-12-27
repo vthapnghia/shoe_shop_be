@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using shoe_shop_be.DTO;
 using shoe_shop_be.Interfaces.IServices;
-using shoe_shop_be.Models;
 
 namespace shoe_shop_be.Controllers
 {

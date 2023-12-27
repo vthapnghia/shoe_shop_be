@@ -1,5 +1,4 @@
 ﻿using shoe_shop_be.DTO;
-using shoe_shop_be.Models;
 using System.Threading.Tasks;
 
 namespace shoe_shop_be.Interfaces.IServices
