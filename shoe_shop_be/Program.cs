@@ -1,5 +1,7 @@
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using shoe_shop_be.Data;
 using shoe_shop_be.Helpers;
@@ -39,8 +41,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
 
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -49,6 +51,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 
 
+var cloudinaryAccount = builder.Configuration.GetSection("Cloudinary").Get<CloudinarySettings>();
+
+// Kh?i t?o ??i t??ng Cloudinary
+Cloudinary cloudinary = new Cloudinary(new Account(
+    cloudinaryAccount.CloudName,
+    cloudinaryAccount.ApiKey,
+    cloudinaryAccount.ApiSecret
+));
+
+// ??ng ký ??i t??ng Cloudinary trong DI container ?? có th? s? d?ng trong controllers và services
+builder.Services.AddSingleton(cloudinary);
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();

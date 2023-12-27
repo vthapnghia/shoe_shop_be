@@ -12,22 +12,48 @@ namespace shoe_shop_be.Services
         private readonly IUserRepository _userRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IAccountRepository accountRepository, IMapper mapper) {
+        private readonly IPhotoService _photoService;
+        public UserService(IUserRepository userRepository, IAccountRepository accountRepository, IMapper mapper, IPhotoService photoService = null)
+        {
             _userRepository = userRepository;
             _accountRepository = accountRepository;
             _mapper = mapper;
+            _photoService = photoService;
         }
-        public async Task<UserDto> GetUser(GetUserModel getUserModel)
+
+        public async Task<UserModel> FirstLogin(FirstLoginModel firstLoginModel, string id)
         {
-            var account = await _accountRepository.GetById(Guid.Parse(getUserModel.AccountId));
+            var account = await _accountRepository.GetById(Guid.Parse(id));
+
+            if (account.UserId != null)
+            {
+                throw new ApiException(400, "User infomation alr registed", "");
+            }
+            User user = new User();
+            if(firstLoginModel.Avatar != null)
+            {
+                var result = await _photoService.AddPhotoAsync(firstLoginModel.Avatar);
+                if(result.Error != null) { 
+                    throw new ApiException(400, result.Error.Message, "");
+                }
+                user.Avatar = result.SecureUrl.AbsoluteUri;
+            }
+            return new UserModel();
+        }
+
+        public async Task<UserModel> GetUser(string id)
+        {
+            var account = await _accountRepository.GetById(Guid.Parse(id));
            
             if(account == null)
             {
                 throw new ApiException(400, "Account is not exist", "");
             }
             var user = await _userRepository.GetById(account.UserId);
-            var userDto = _mapper.Map<UserDto>(user);
-            return userDto;
+            var userModel = _mapper.Map<UserModel>(user);
+            return userModel;
         }
+
+
     }
 }

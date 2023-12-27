@@ -3,7 +3,7 @@ using shoe_shop_be.Helpers;
 
 namespace shoe_shop_be.DTO
 {
-    public class UserDto
+    public class UserModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

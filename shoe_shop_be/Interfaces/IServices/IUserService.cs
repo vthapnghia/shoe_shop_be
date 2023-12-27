@@ -5,6 +5,7 @@ namespace shoe_shop_be.Interfaces.IServices
 {
     public interface IUserService
     {
-        Task<UserDto> GetUser(GetUserModel getUserModel);
+        Task<UserModel> GetUser(string id);
+        Task<UserModel> FirstLogin(FirstLoginModel firstLoginModel, string id);
     }
 }

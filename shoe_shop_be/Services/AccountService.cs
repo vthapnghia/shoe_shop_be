@@ -77,7 +77,7 @@ namespace shoe_shop_be.Services
             }
             var user = await _userRepository.GetById(accountExist.UserId);
             LoginResponseModel loginResponseModel = new LoginResponseModel();
-            loginResponseModel.User = _mapper.Map<UserDto>(user);
+            loginResponseModel.User = _mapper.Map<UserModel>(user);
             loginResponseModel.Token = _tokenService.CreateToken(accountExist.Id);
             loginResponseModel.IsSeller = accountExist.IsSeller;
             loginResponseModel.IsAdmin = accountExist.IsAdmin;
@@ -152,7 +152,7 @@ namespace shoe_shop_be.Services
                 throw new ApiException(400, "Password is incorrect", "");
             }
             var user = await _userRepository.GetById(accountExist.UserId);
-            loginResponseModel.User = _mapper.Map<UserDto>(user);
+            loginResponseModel.User = _mapper.Map<UserModel>(user);
             loginResponseModel.Token = _tokenService.CreateToken(accountExist.Id);
             loginResponseModel.IsSeller = accountExist.IsSeller;
             loginResponseModel.IsAdmin = accountExist.IsAdmin;
@@ -180,14 +180,14 @@ namespace shoe_shop_be.Services
                 };
                 _accountRepository.Insert(accounts);
                 _accountRepository.SaveChange();
-                loginResponseModel.User = new UserDto();
+                loginResponseModel.User = new UserModel();
                 loginResponseModel.Token = _tokenService.CreateToken(accounts.Id);
                 loginResponseModel.IsSeller = false;
                 loginResponseModel.IsAdmin = false;
                 return loginResponseModel;
             }
             var user = await _userRepository.GetById(accountExist.UserId);
-            loginResponseModel.User = _mapper.Map<UserDto>(user);
+            loginResponseModel.User = _mapper.Map<UserModel>(user);
             loginResponseModel.Token = _tokenService.CreateToken(accountExist.Id);
             loginResponseModel.IsSeller = false;
             loginResponseModel.IsAdmin = false;
