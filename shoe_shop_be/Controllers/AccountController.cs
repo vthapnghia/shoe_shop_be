@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using shoe_shop_be.DTO;
 using shoe_shop_be.Interfaces.IServices;
 
@@ -16,14 +17,14 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterModel registerModel)
+        public async Task<ActionResult> Register(RegisterModel registerModel)
         {
             var res = await _accountService.Register(registerModel);
             return Ok(res);
         }
 
         [HttpPost("verify/{id}")]
-        public async Task<IActionResult> Verify([FromBody] VerifyModel verifyModel, string id)
+        public async Task<ActionResult> Verify([FromBody] VerifyModel verifyModel, string id)
         {
             var verify = await _accountService.Verify(verifyModel, id);
             if (!verify)
@@ -34,21 +35,21 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginModel loginModel)
+        public async Task<ActionResult> Login(LoginModel loginModel)
         {
             var res = await _accountService.Login(loginModel);
             return Ok(res);
         }
 
         [HttpPost("resetPassword")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
+        public async Task<ActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
         {
             var res = await _accountService.ResetPassword(resetPasswordModel);
             return Ok(res);
         }
 
         [HttpPost("resetPassword/verify")]
-        public async Task<IActionResult> VerifyResetPassword(VerifyRegisterPasswordModel verifyRegisterPasswordModel)
+        public async Task<ActionResult> VerifyResetPassword(VerifyRegisterPasswordModel verifyRegisterPasswordModel)
         {
             var res = await _accountService.VerifyResetPassword(verifyRegisterPasswordModel);
             if (!res)
@@ -59,16 +60,55 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPost("admin")]
-        public async Task<IActionResult> LoginAdmin(LoginModel loginModel)
+        public async Task<ActionResult> LoginAdmin(LoginModel loginModel)
         {
             var res = await _accountService.LoginAdmin(loginModel);
             return Ok(res);
         }
 
         [HttpPost("google")]
-        public async Task<IActionResult> LoginGoogle(LoginGoogleModel loginGoogleModel)
+        public async Task<ActionResult> LoginGoogle(LoginGoogleModel loginGoogleModel)
         {
             var res = await _accountService.LoginGoogle(loginGoogleModel);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<AccountsDto>>> GetAllAccount()
+        {
+            var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
+            if(id == null)
+            {
+                return BadRequest();
+            }
+            var res = await _accountService.GetAllAccount(id.Value);
+            return Ok(res);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteAccount(string id)
+        {
+            var idLogin = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
+            if(idLogin == null)
+            {
+                return BadRequest();
+            }
+            var res = await _accountService.DeleteAccount(id, idLogin.Value);
+            return Ok(res);
+        }
+
+        [HttpGet("search")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<AccountsDto>>> SearchAccount([FromQuery(Name = "search")] string search)
+        {
+            var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var res = await _accountService.SearchAccount(search, id.Value);
             return Ok(res);
         }
     }

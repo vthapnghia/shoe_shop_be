@@ -18,7 +18,7 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUser()
+        public async Task<ActionResult> GetUser()
         {
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if(id == null)
@@ -30,7 +30,7 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FirstLogin(FirstLoginModel firstLoginModel)
+        public async Task<ActionResult> FirstLogin(FirstLoginModel firstLoginModel)
         {
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (id == null)
@@ -40,5 +40,18 @@ namespace shoe_shop_be.Controllers
             var res = await _userService.FirstLogin(firstLoginModel, id.Value);
             return Ok(res);
         }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(FirstLoginModel firstLoginModel)
+        {
+            var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var res = await _userService.UpdateUser(firstLoginModel, id.Value);
+            return Ok(res);
+        }
+
     }
 }

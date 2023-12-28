@@ -50,9 +50,9 @@ namespace shoe_shop_be.Services
             user.Phone = firstLoginModel.Phone;
             user.Name = firstLoginModel.Name;
             account.UserId = user.Id;
-            _userRepository.Insert(user);
+            await _userRepository.Insert(user);
             _accountRepository.Update(account);
-            _userRepository.SaveChange();
+            await _userRepository.SaveChange();
             var userModel = _mapper.Map<UserModel>(user);
             return userModel;
         }
@@ -61,7 +61,7 @@ namespace shoe_shop_be.Services
         {
             var account = await _accountRepository.GetById(Guid.Parse(id));
            
-            if(account == null)
+            if(account == null || account.IsActive == false)
             {
                 throw new ApiException(400, "Account is not exist", "");
             }
@@ -70,6 +70,36 @@ namespace shoe_shop_be.Services
             return userModel;
         }
 
-
+        public async Task<UserModel> UpdateUser(FirstLoginModel firstLoginModel, string id)
+        {
+            var account = await _accountRepository.GetById(Guid.Parse(id));
+            var user = await _userRepository.GetById(account.UserId);
+            if(user == null)
+            {
+                throw new ApiException(400, "User is not register information", "");
+            }
+            if (firstLoginModel.Avatar != null)
+            {
+                var result = await _photoService.AddPhotoAsync(firstLoginModel.Avatar);
+                if (result.Error != null)
+                {
+                    throw new ApiException(400, result.Error.Message, "");
+                }
+                user.Avatar = result.SecureUrl.AbsoluteUri;
+            }
+            else
+            {
+                user.Avatar = null;
+            }
+            user.Address = firstLoginModel.Address;
+            user.Age = firstLoginModel.Age;
+            user.Gender = (Gender)Enum.Parse(typeof(Gender), firstLoginModel.Gender);
+            user.Phone = firstLoginModel.Phone;
+            user.Name = firstLoginModel.Name;
+            _userRepository.Update(user);
+            await _userRepository.SaveChange();
+            var userModel = _mapper.Map<UserModel>(user);
+            return userModel;
+        }
     }
 }

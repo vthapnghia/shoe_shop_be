@@ -7,5 +7,6 @@ namespace shoe_shop_be.Interfaces.IServices
     {
         Task<UserModel> GetUser(string id);
         Task<UserModel> FirstLogin(FirstLoginModel firstLoginModel, string id);
+        Task<UserModel> UpdateUser(FirstLoginModel firstLoginModel, string id);
     }
 }

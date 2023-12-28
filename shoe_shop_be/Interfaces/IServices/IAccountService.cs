@@ -12,5 +12,8 @@ namespace shoe_shop_be.Interfaces.IServices
         Task<bool> VerifyResetPassword(VerifyRegisterPasswordModel verifyRegisterPasswordModel);
         Task<LoginResponseModel> LoginAdmin(LoginModel loginModel);
         Task<LoginResponseModel> LoginGoogle(LoginGoogleModel loginGoogleModel);
+        Task<IEnumerable<AccountsDto>> GetAllAccount(string id);
+        Task<AccountsDto> DeleteAccount(string id, string idLogin);
+        Task<IEnumerable<AccountsDto>> SearchAccount(string search, string id);
     }
 }

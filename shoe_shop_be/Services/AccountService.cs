@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using shoe_shop_be.DTO;
 using shoe_shop_be.Entities;
 using shoe_shop_be.Errors;
 using shoe_shop_be.Helpers;
 using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace shoe_shop_be.Services
 {
@@ -178,8 +175,8 @@ namespace shoe_shop_be.Services
                     Secret = "",
                     GoogleId = loginGoogleModel.GoogleId,
                 };
-                _accountRepository.Insert(accounts);
-                _accountRepository.SaveChange();
+                await _accountRepository.Insert(accounts);
+                await _accountRepository.SaveChange();
                 loginResponseModel.User = new UserModel();
                 loginResponseModel.Token = _tokenService.CreateToken(accounts.Id);
                 loginResponseModel.IsSeller = false;
@@ -192,6 +189,57 @@ namespace shoe_shop_be.Services
             loginResponseModel.IsSeller = false;
             loginResponseModel.IsAdmin = false;
             return loginResponseModel;
+        }
+
+        public async Task<IEnumerable<AccountsDto>> GetAllAccount(string id)
+        {
+            var account = await _accountRepository.GetById(Guid.Parse(id));
+            if(account == null || account.IsActive == false) {
+                throw new ApiException(400, "Account is not exist", "");
+            }
+            if(account.IsAdmin != true)
+            {
+                throw new ApiException(401, "Unauthorized!!", "");
+            }
+            var listAccount = await _accountRepository.GetAllAccount(Guid.Parse(id));
+            
+            var listAccountDto = _mapper.Map<IEnumerable<AccountsDto>>(listAccount);
+            return listAccountDto;
+        }
+
+        public async Task<AccountsDto> DeleteAccount(string id,string idLogin)
+        {
+            var accontLogin = await _accountRepository.GetById(Guid.Parse(idLogin));
+            if (accontLogin == null || accontLogin.IsActive == false)
+            {
+                throw new ApiException(400, "Account is not exist", "");
+            }
+            if (accontLogin.IsAdmin != true)
+            {
+                throw new ApiException(401, "Unauthorized!!", "");
+            }
+            var account = await _accountRepository.GetById(Guid.Parse(id));
+            account.IsActive = false;
+            _accountRepository.Update(account);
+            await _accountRepository.SaveChange();
+            var res = _mapper.Map<AccountsDto>(account);
+            return res;
+        }
+
+        public async Task<IEnumerable<AccountsDto>> SearchAccount(string search, string id)
+        {
+            var accontLogin = await _accountRepository.GetById(Guid.Parse(id));
+            if (accontLogin == null || accontLogin.IsActive == false)
+            {
+                throw new ApiException(400, "Account is not exist", "");
+            }
+            if (accontLogin.IsAdmin != true)
+            {
+                throw new ApiException(400, "Unauthorized!!", "");
+            }
+            var listAccount = await _accountRepository.GetBySearch(search, Guid.Parse(id));
+            var listAccountDto = _mapper.Map<IEnumerable<AccountsDto>>(listAccount);
+            return listAccountDto;
         }
     }
 }
