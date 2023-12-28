@@ -20,22 +20,24 @@ namespace shoe_shop_be.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUser()
         {
-            var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(accessToken) as JwtSecurityToken;
-            var id = jsonToken?.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-            var res = await _userService.GetUser(id);
+            var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
+            if(id == null)
+            {
+                return BadRequest();
+            }
+            var res = await _userService.GetUser(id.Value);
             return Ok(res);
         }
 
         [HttpPost]
         public async Task<IActionResult> FirstLogin(FirstLoginModel firstLoginModel)
         {
-            var accessToken = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(accessToken) as JwtSecurityToken;
-            var id = jsonToken?.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-            var res = await _userService.FirstLogin(firstLoginModel, id);
+            var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            var res = await _userService.FirstLogin(firstLoginModel, id.Value);
             return Ok(res);
         }
     }

@@ -15,7 +15,7 @@ namespace shoe_shop_be.Services
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
-        public UserService(IUserRepository userRepository, IAccountRepository accountRepository, IMapper mapper, IPhotoService photoService = null)
+        public UserService(IUserRepository userRepository, IAccountRepository accountRepository, IMapper mapper, IPhotoService photoService)
         {
             _userRepository = userRepository;
             _accountRepository = accountRepository;
@@ -39,6 +39,10 @@ namespace shoe_shop_be.Services
                     throw new ApiException(400, result.Error.Message, "");
                 }
                 user.Avatar = result.SecureUrl.AbsoluteUri;
+            }
+            else
+            {
+                user.Avatar = null;
             }
             user.Address = firstLoginModel.Address;
             user.Age = firstLoginModel.Age;

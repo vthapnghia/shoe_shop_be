@@ -11,6 +11,6 @@ namespace shoe_shop_be.Entities
         public Gender Gender { get; set; }
         public string Address { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
-        public string Avatar { get; set; } = string.Empty;
+        public string? Avatar { get; set; } = string.Empty;
     }
 }

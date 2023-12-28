@@ -17,6 +17,6 @@ namespace shoe_shop_be.DTO
         [Required]
         public string Phone { get; set; }
         [Required]
-        public IFormFile Avatar { get; set; }
+        public IFormFile? Avatar { get; set; }
     }
 }

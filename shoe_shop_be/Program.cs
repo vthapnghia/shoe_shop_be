@@ -32,6 +32,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddAutoMapper(typeof (Program));
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
