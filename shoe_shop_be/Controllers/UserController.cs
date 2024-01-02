@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 namespace shoe_shop_be.Controllers
 {
     [Route("[controller]")]
-    [Controller]
+    [ApiController]
     [Authorize]
     public class UserController : Controller
     {
@@ -30,7 +30,7 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> FirstLogin(FirstLoginModel firstLoginModel)
+        public async Task<ActionResult> FirstLogin([FromForm]FirstLoginModel firstLoginModel)
         {
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (id == null)
@@ -42,7 +42,7 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateUser(FirstLoginModel firstLoginModel)
+        public async Task<ActionResult> UpdateUser([FromForm] FirstLoginModel firstLoginModel)
         {
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (id == null)

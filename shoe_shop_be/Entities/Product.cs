@@ -5,7 +5,7 @@ namespace shoe_shop_be.Entities
 {
     public class Product: ICreatedAt
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public int Price { get; set; }
         public ProductType Type { get; set; }
@@ -13,7 +13,7 @@ namespace shoe_shop_be.Entities
         public Brands Brand { get; set; }
         public string Description { get; set; }
         public Gender Gender { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public int Discount { get; set; }
         public DateTime? CreatedAt { get ; set; }
         public List<Images> ProductImages { get; set; } = new List<Images>();
