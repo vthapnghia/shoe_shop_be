@@ -2,7 +2,7 @@
 {
     public class Likes
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid AccountId { get; set; }
         public Accounts Account { get; set; }
         public Guid ProductId { get; set; }
