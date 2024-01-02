@@ -80,7 +80,7 @@ namespace shoe_shop_be.Controllers
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if(id == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
             var res = await _accountService.GetAllAccount(id.Value);
             return Ok(res);
@@ -93,7 +93,7 @@ namespace shoe_shop_be.Controllers
             var idLogin = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if(idLogin == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
             var res = await _accountService.DeleteAccount(id, idLogin.Value);
             return Ok(res);
@@ -106,7 +106,7 @@ namespace shoe_shop_be.Controllers
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (id == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
             var res = await _accountService.SearchAccount(search, id.Value);
             return Ok(res);

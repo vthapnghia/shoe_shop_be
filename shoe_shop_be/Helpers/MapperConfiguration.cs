@@ -11,6 +11,7 @@ namespace shoe_shop_be.Helpers
             CreateMap<Accounts, AccountsDto>();
             CreateMap<RegisterModel, Accounts>();
             CreateMap<User, UserModel>();
+            CreateMap<Brands, BrandDto>();
         }
     }
 }

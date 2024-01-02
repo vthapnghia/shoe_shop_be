@@ -61,7 +61,7 @@ namespace shoe_shop_be.Services
         {
             var account = await _accountRepository.GetById(Guid.Parse(id));
            
-            if(account == null || account.IsActive == false)
+            if(account == null)
             {
                 throw new ApiException(400, "Account is not exist", "");
             }

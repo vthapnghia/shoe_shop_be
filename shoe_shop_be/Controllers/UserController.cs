@@ -23,7 +23,7 @@ namespace shoe_shop_be.Controllers
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if(id == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
             var res = await _userService.GetUser(id.Value);
             return Ok(res);
@@ -35,7 +35,7 @@ namespace shoe_shop_be.Controllers
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (id == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
             var res = await _userService.FirstLogin(firstLoginModel, id.Value);
             return Ok(res);
@@ -47,7 +47,7 @@ namespace shoe_shop_be.Controllers
             var id = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (id == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
             var res = await _userService.UpdateUser(firstLoginModel, id.Value);
             return Ok(res);

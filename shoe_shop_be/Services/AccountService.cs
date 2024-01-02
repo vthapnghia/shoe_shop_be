@@ -194,8 +194,8 @@ namespace shoe_shop_be.Services
         public async Task<IEnumerable<AccountsDto>> GetAllAccount(string id)
         {
             var account = await _accountRepository.GetById(Guid.Parse(id));
-            if(account == null || account.IsActive == false) {
-                throw new ApiException(400, "Account is not exist", "");
+            if(account == null) {
+                throw new ApiException(401, "Unauthorized!!", "");
             }
             if(account.IsAdmin != true)
             {
@@ -210,9 +210,9 @@ namespace shoe_shop_be.Services
         public async Task<AccountsDto> DeleteAccount(string id,string idLogin)
         {
             var accontLogin = await _accountRepository.GetById(Guid.Parse(idLogin));
-            if (accontLogin == null || accontLogin.IsActive == false)
+            if (accontLogin == null)
             {
-                throw new ApiException(400, "Account is not exist", "");
+                throw new ApiException(401, "Unauthorized!!", "");
             }
             if (accontLogin.IsAdmin != true)
             {
@@ -229,9 +229,9 @@ namespace shoe_shop_be.Services
         public async Task<IEnumerable<AccountsDto>> SearchAccount(string search, string id)
         {
             var accontLogin = await _accountRepository.GetById(Guid.Parse(id));
-            if (accontLogin == null || accontLogin.IsActive == false)
+            if (accontLogin == null)
             {
-                throw new ApiException(400, "Account is not exist", "");
+                throw new ApiException(401, "Unauthorized!!", "");
             }
             if (accontLogin.IsAdmin != true)
             {
