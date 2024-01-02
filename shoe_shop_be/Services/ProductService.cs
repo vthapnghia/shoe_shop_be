@@ -4,6 +4,7 @@ using shoe_shop_be.Entities;
 using shoe_shop_be.Errors;
 using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
+using shoe_shop_be.Repositories;
 
 namespace shoe_shop_be.Services
 {
@@ -80,6 +81,7 @@ namespace shoe_shop_be.Services
                 throw new ApiException(400, "Product is not exist", "");
             }
             _productRepository.Delete(product);
+            await _productRepository.SaveChange();
             return true;
         }
 

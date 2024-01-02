@@ -14,6 +14,7 @@ namespace shoe_shop_be.Helpers
             CreateMap<Brands, BrandDto>();
             CreateMap<Product, ProductDto>();
             CreateMap<Product, ProductModel>();
+            CreateMap<Ships, ShipDto>();
         }
     }
 }
