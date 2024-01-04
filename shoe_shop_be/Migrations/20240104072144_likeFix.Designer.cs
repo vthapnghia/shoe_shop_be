@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using shoe_shop_be.Data;
 
@@ -11,9 +12,10 @@ using shoe_shop_be.Data;
 namespace shoe_shop_be.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240104072144_likeFix")]
+    partial class likeFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,17 +85,17 @@ namespace shoe_shop_be.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("25a07e7b-80cf-4918-b18c-401c57841f49"),
+                            Id = new Guid("3cbba9cf-965f-4131-bc43-265ffeeb6626"),
                             Name = "Addidas"
                         },
                         new
                         {
-                            Id = new Guid("0b34439a-11bb-4863-b591-7bd4eb9a93a5"),
+                            Id = new Guid("daae4f7f-45f5-4276-9e93-0e24c0757cb5"),
                             Name = "Nike"
                         },
                         new
                         {
-                            Id = new Guid("3568990e-ae5e-4ecb-87c2-5f503b882ce4"),
+                            Id = new Guid("9c6bf887-e81b-48c8-b9aa-b94996f1a347"),
                             Name = "Converse"
                         });
                 });
@@ -115,17 +117,17 @@ namespace shoe_shop_be.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b6f58fbc-b0fa-4b40-94d4-574255f32286"),
+                            Id = new Guid("a53afcac-c7d2-4814-943f-73f65364d1d0"),
                             Name = "red"
                         },
                         new
                         {
-                            Id = new Guid("eca1ab39-44f1-45d1-97a7-29fd807675bd"),
+                            Id = new Guid("cd5aabbe-1c14-4069-bd70-8b69a6632885"),
                             Name = "blue"
                         },
                         new
                         {
-                            Id = new Guid("30cb44ea-d28e-47b6-9dbd-c58948ed8a00"),
+                            Id = new Guid("c2ae1f6e-6ca8-43d8-ba71-1e5fc9485ae4"),
                             Name = "green"
                         });
                 });
@@ -185,11 +187,11 @@ namespace shoe_shop_be.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("Delete")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("delete")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -465,17 +467,17 @@ namespace shoe_shop_be.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6d575ca9-aa1c-4f36-8d5a-62fb133b51db"),
+                            Id = new Guid("24187f49-c845-4e9c-9947-14d12681ccd8"),
                             Name = "40"
                         },
                         new
                         {
-                            Id = new Guid("01f39c72-91a8-4148-98e8-ad16ee70f4dd"),
+                            Id = new Guid("e7f6eb63-126a-423a-95a6-2f1329778d3a"),
                             Name = "41"
                         },
                         new
                         {
-                            Id = new Guid("8bef51a5-b09f-4bda-8a2a-46e8949147ff"),
+                            Id = new Guid("631b9231-e144-4970-8136-03aea18f2bca"),
                             Name = "42"
                         });
                 });

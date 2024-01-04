@@ -9,7 +9,7 @@ namespace shoe_shop_be.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class BrandController : Controller
+    public class BrandController : ControllerBase
     {
         private readonly IBrandService _brandService;
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CloudinaryDotNet;
+using shoe_shop_be.Data;
 using shoe_shop_be.DTO;
 using shoe_shop_be.Entities;
 using shoe_shop_be.Errors;
@@ -12,58 +13,65 @@ namespace shoe_shop_be.Services
     public class LikeService : ILikeService
     {
         private readonly ILikeRepository _likeRepository;
-        private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
+        private readonly DataContext _dataContext;
 
-        public LikeService(ILikeRepository likeRepository, IAccountRepository accountRepository, IMapper mapper, IProductRepository productRepository)
+        public LikeService(ILikeRepository likeRepository, IMapper mapper, IProductRepository productRepository, DataContext dataContext)
         {
             _likeRepository = likeRepository;
-            _accountRepository = accountRepository;
             _mapper = mapper;
             _productRepository = productRepository;
+            _dataContext = dataContext;
         }
-        public async Task<LikeDto> AddToLikeList(LikeModel likeModel, string accountId)
+        public async Task<LikeDto> AddToLikeList(LikeModel likeModel, Guid accountId)
         {
-            var isUserLike = await _likeRepository.GetBYUserIdAndProductId(Guid.Parse(likeModel.ProductId), Guid.Parse(accountId));
-            if (isUserLike != null)
+            var isUserLike = await _likeRepository.GetBYUserIdAndProductId(likeModel.ProductId, accountId);
+            //var isUserLike = _dataContext.Set<Likes>().AsQueryable().Where(l => l.AccountId == accountId && l.ProductId == likeModel.ProductId);
+            if (isUserLike != null && isUserLike.Delete == true)
             {
-                throw new ApiException(400, "Product already in list", "");
+                isUserLike.Delete = false;
+                _likeRepository.Update(isUserLike);
+                await _likeRepository.SaveChange();
+                return _mapper.Map<LikeDto>(isUserLike);
             }
             Likes like = new Likes();
-            like.ProductId = Guid.Parse(likeModel.ProductId);
-            like.AccountId = Guid.Parse(accountId);
+            like.ProductId = likeModel.ProductId;
+            like.AccountId = accountId;
             await _likeRepository.Insert(like);
             await _likeRepository.SaveChange();
-            var likeDto = _mapper.Map<LikeDto>(like);
-            return likeDto;
+            return _mapper.Map<LikeDto>(like);
         }
 
-        public async Task<List<ProductDto>> GetLikeList(string accountId)
+        public async Task<List<ProductDto>> GetLikeList(Guid accountId)
         {
-            var listLike = await _likeRepository.GetByAccountId(Guid.Parse(accountId));
+            var listLike = await _likeRepository.GetByAccountId(accountId);
             if (listLike == null)
             {
                 throw new ApiException(400, "User haven't like product", "");
             }
-            List<Product> listProduct = new List<Product>();
-            foreach( var item in listLike)
+            List<ProductDto> listProductDto = new List<ProductDto>();
+            foreach (var like in listLike)
             {
-                var product = await _productRepository.GetById(item.ProductId);
-                listProduct.Add(product);
+                var productDto = _mapper.Map<ProductDto>(like.Product);
+                foreach (var image in like.Product.ProductImages)
+                {
+                    productDto.listImage.Add(image.Url);
+                }
+                listProductDto.Add(productDto);
             }
-            var listProductDto = _mapper.Map<List<ProductDto>>(listProduct);
             return listProductDto;
         }
 
-        public async Task<bool> RemoveFromLikeList(string id, string accountId)
+        public async Task<bool> RemoveFromLikeList(Guid id, Guid accountId)
         {
-            var isUserLike = await _likeRepository.GetBYUserIdAndProductId(Guid.Parse(id), Guid.Parse(accountId));
-            if (isUserLike == null)
+            var isUserLike = await _likeRepository.GetBYUserIdAndProductId(id, accountId);
+            if (isUserLike == null|| isUserLike.Delete == true)
             {
-                throw new ApiException(400, "Product haven't like product", "");
+                throw new ApiException(400, "User havent like product", "");
             }
-            _likeRepository.Delete(isUserLike);
+            isUserLike.Delete = true;
+            _likeRepository.Update(isUserLike);
             await _likeRepository.SaveChange();
             return true;
         }

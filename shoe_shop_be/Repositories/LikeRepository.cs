@@ -13,7 +13,7 @@ namespace shoe_shop_be.Repositories
 
         public async Task<List<Likes>> GetByAccountId(Guid accountId)
         {
-            return await _dataContext.Likes.Where(l => l.AccountId == accountId).ToListAsync();
+            return await _dataContext.Likes.Where(l => l.AccountId == accountId && l.Delete == false).Include(l => l.Product).ThenInclude(g => g.ProductImages).ToListAsync();
         }
 
         public async Task<Likes?> GetBYUserIdAndProductId(Guid productId, Guid userId)

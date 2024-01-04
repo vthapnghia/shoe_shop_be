@@ -8,7 +8,7 @@ namespace shoe_shop_be.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class LikeController : Controller
+    public class LikeController : ControllerBase
     {
         private readonly ILikeService _likeService;
 
@@ -24,7 +24,7 @@ namespace shoe_shop_be.Controllers
             {
                 return Unauthorized();
             }
-            var res = await _likeService.GetLikeList(accountId.Value);
+            var res = await _likeService.GetLikeList(Guid.Parse(accountId.Value));
             return Ok(res);
         }
 
@@ -36,19 +36,19 @@ namespace shoe_shop_be.Controllers
             {
                 return Unauthorized();
             }
-            var res = await _likeService.AddToLikeList(likeModel, accountId.Value);
+            var res = await _likeService.AddToLikeList(likeModel, Guid.Parse(accountId.Value));
             return Ok(res);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> RemoveFromLikeList(string id)
+        public async Task<ActionResult> RemoveFromLikeList(Guid id)
         {
             var accountId = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (accountId == null)
             {
                 return Unauthorized();
             }
-            var res = await _likeService.RemoveFromLikeList(id, accountId.Value);
+            var res = await _likeService.RemoveFromLikeList(id, Guid.Parse(accountId.Value));
             return Ok(res);
         }
     }

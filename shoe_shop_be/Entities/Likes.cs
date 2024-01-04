@@ -7,5 +7,6 @@
         public Accounts Account { get; set; }
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
+        public bool Delete { get; set; } = false;
     }
 }

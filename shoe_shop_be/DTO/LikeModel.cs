@@ -6,6 +6,6 @@ namespace shoe_shop_be.DTO
     public class LikeModel
     {
         [Required]
-        public string ProductId { get; set; }
+        public Guid ProductId { get; set; }
     }
 }

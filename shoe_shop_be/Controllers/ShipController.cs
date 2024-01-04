@@ -9,7 +9,7 @@ namespace shoe_shop_be.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class ShipController : Controller
+    public class ShipController : ControllerBase
     {
         private readonly IShipService _shipService;
         public ShipController(IShipService shipService) {

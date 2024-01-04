@@ -9,7 +9,7 @@ namespace shoe_shop_be.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
         public UserController(IUserService userService)
