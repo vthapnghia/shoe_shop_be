@@ -29,9 +29,9 @@ namespace shoe_shop_be.Services
             _mapper = mapper;
             _imageRepository = imageRepository;
         }
-        public async Task<ProductDto> CreateProduct(ProductModel productModel, string accountId)
+        public async Task<ProductDto> CreateProduct(ProductModel productModel, Guid accountId)
         {
-            var account = await _accountRepository.GetById(Guid.Parse(accountId));
+            var account = await _accountRepository.GetById(accountId);
             if (account.IsSeller == false)
             {
                 throw new ApiException(401, "Unauthorized!!", "");
@@ -40,8 +40,7 @@ namespace shoe_shop_be.Services
             {
                 throw new ApiException(400, "Error", "");
             }
-            Product product = new Product();
-            product = _mapper.Map<Product>(productModel);
+            var product = _mapper.Map<Product>(productModel);
             await _productRepository.Insert(product);
             List<string> listImage = new List<string>();
             foreach (var file in productModel.listImage)
@@ -63,9 +62,9 @@ namespace shoe_shop_be.Services
             return productDto;
         }
 
-        public async Task<bool> DeletProduct(string productId, string accountId)
+        public async Task<bool> DeletProduct(Guid productId, Guid accountId)
         {
-            var account = await _accountRepository.GetById(Guid.Parse(accountId));
+            var account = await _accountRepository.GetById(accountId);
             if (account.IsSeller == false)
             {
                 throw new ApiException(401, "Unauthorized!!", "");
@@ -96,9 +95,9 @@ namespace shoe_shop_be.Services
             return listProductDto;
         }
 
-        public async Task<ProductDto> GetProduct(string productId)
+        public async Task<ProductDto> GetProduct(Guid productId)
         {
-            var product = await _productRepository.GetProductById(Guid.Parse(productId));
+            var product = await _productRepository.GetProductById(productId);
             if (product == null)
             {
                 throw new ApiException(400, "Product is not exist", "");
@@ -127,14 +126,14 @@ namespace shoe_shop_be.Services
             return listProductDto;
         }
 
-        public async Task<ProductDto> UpdateProduct(string productId, ProductModel productModel, string accountId)
+        public async Task<ProductDto> UpdateProduct(Guid productId, ProductModel productModel, Guid accountId)
         {
-            var account = await _accountRepository.GetById(Guid.Parse(accountId));
+            var account = await _accountRepository.GetById(accountId);
             if (account.IsSeller == false)
             {
                 throw new ApiException(401, "Unauthorized!!", "");
             }
-            var product = await _productRepository.GetProductById(Guid.Parse(productId));
+            var product = await _productRepository.GetProductById(productId);
             if (product == null)
             {
                 throw new ApiException(400, "Product is not exist", "");
@@ -159,7 +158,13 @@ namespace shoe_shop_be.Services
                 listImage.Add(result.SecureUrl.AbsoluteUri);
             }
 
-            product = _mapper.Map<Product>(productModel);
+            product.Name = productModel.Name;
+            product.Price = productModel.Price;
+            product.Type = productModel.Type;
+            product.BrandId = productModel.BrandId;
+            product.Description = productModel.Description;
+            product.Gender = productModel.Gender;
+            product.Discount = productModel.Discount;
             _productRepository.Update(product);
             await _productRepository.SaveChange();
             var productDto = _mapper.Map<ProductDto>(product);

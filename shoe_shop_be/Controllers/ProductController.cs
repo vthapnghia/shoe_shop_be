@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using shoe_shop_be.DTO;
-using shoe_shop_be.Interfaces.IRepositories;
 using shoe_shop_be.Interfaces.IServices;
-using System.Diagnostics.Contracts;
 
 namespace shoe_shop_be.Controllers
 {
@@ -24,12 +22,12 @@ namespace shoe_shop_be.Controllers
             {
                 return Unauthorized();
             }
-            var res = await _productService.CreateProduct(productModel, accountId.Value);
+            var res = await _productService.CreateProduct(productModel, Guid.Parse(accountId.Value));
             return Ok(res);
         }
 
         [HttpGet("{id}")]        
-        public async Task<ActionResult> GetProduct(string id)
+        public async Task<ActionResult> GetProduct(Guid id)
         {
             var res = await _productService.GetProduct(id);
             return Ok(res);
@@ -43,14 +41,14 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProduct([FromForm] ProductModel productModel, string id)
+        public async Task<ActionResult> UpdateProduct([FromForm] ProductModel productModel, Guid id)
         {
             var accountId = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (accountId == null)
             {
                 return Unauthorized();
             }
-            var res = await _productService.UpdateProduct(id, productModel, accountId.Value);
+            var res = await _productService.UpdateProduct(id, productModel, Guid.Parse(accountId.Value));
             return Ok(res);
         }
 
@@ -62,14 +60,14 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProduct(string id)
+        public async Task<ActionResult> DeleteProduct(Guid id)
         {
             var accountId = this.HttpContext.User.Claims.Where(c => c.Type == "id").FirstOrDefault();
             if (accountId == null)
             {
                 return Unauthorized();
             }
-            var res = await _productService.DeletProduct(id, accountId.Value);
+            var res = await _productService.DeletProduct(id, Guid.Parse(accountId.Value));
             return Ok(res);
         }
     }
