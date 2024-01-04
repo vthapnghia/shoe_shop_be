@@ -4,7 +4,7 @@ namespace shoe_shop_be.Entities
 {
     public class Ratings
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
         public List<RatingImages> Images { get; set; }
