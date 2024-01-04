@@ -17,42 +17,37 @@ namespace shoe_shop_be.Services
         private readonly IImageRepository _imageRepository;
 
         public ProductService(
-            IAccountRepository accountRepository, 
-            IProductRepository productRepository, 
-            IPhotoService photoService, 
+            IAccountRepository accountRepository,
+            IProductRepository productRepository,
+            IPhotoService photoService,
             IMapper mapper,
             IImageRepository imageRepository)
         {
             _accountRepository = accountRepository;
             _productRepository = productRepository;
-            _photoService = photoService;   
+            _photoService = photoService;
             _mapper = mapper;
             _imageRepository = imageRepository;
         }
         public async Task<ProductDto> CreateProduct(ProductModel productModel, string accountId)
         {
             var account = await _accountRepository.GetById(Guid.Parse(accountId));
-            if( account.IsSeller == false) {
+            if (account.IsSeller == false)
+            {
                 throw new ApiException(401, "Unauthorized!!", "");
             }
-            if(productModel.listImage.Count() == 0)
+            if (productModel.listImage.Count() == 0)
             {
                 throw new ApiException(400, "Error", "");
             }
             Product product = new Product();
-            product.Name = productModel.Name;
-            product.Price = productModel.Price;
-            product.Type = productModel.Type;
-            product.BrandId = Guid.Parse(productModel.BrandId);
-            product.Description = productModel.Description;
-            product.Gender = productModel.Gender;
-            product.Discount = productModel.Discount;
+            product = _mapper.Map<Product>(productModel);
             await _productRepository.Insert(product);
             List<string> listImage = new List<string>();
-            foreach(var file in productModel.listImage)
+            foreach (var file in productModel.listImage)
             {
                 var result = await _photoService.AddPhotoAsync(file);
-                if(result.Error != null)
+                if (result.Error != null)
                 {
                     throw new ApiException(500, result.Error.Message, "");
                 }
@@ -76,7 +71,7 @@ namespace shoe_shop_be.Services
                 throw new ApiException(401, "Unauthorized!!", "");
             }
             var product = await _productRepository.GetById(productId);
-            if(product == null)
+            if (product == null)
             {
                 throw new ApiException(400, "Product is not exist", "");
             }
@@ -87,29 +82,29 @@ namespace shoe_shop_be.Services
 
         public async Task<List<ProductDto>> GetAllProducts()
         {
-            var listProduct = await _productRepository.GetAll();
-            var listProductDto = _mapper.Map<List<ProductDto>>(listProduct);
-            foreach (var product in listProductDto)
+            var listProduct = await _productRepository.GetAllProduct();
+            var listProductDto = new List<ProductDto>();
+            foreach (var product in listProduct)
             {
-                var listImage = await _imageRepository.GetAllByProduct(product.Id);
-                foreach (var image in listImage)
+                var productDto = _mapper.Map<ProductDto>(product);
+                foreach (var image in product.ProductImages)
                 {
-                    product.listImage.Add(image.Url);
+                    productDto.listImage.Add(image.Url);
                 }
+                listProductDto.Add(productDto);
             }
             return listProductDto;
         }
 
         public async Task<ProductDto> GetProduct(string productId)
         {
-            var product = await _productRepository.GetById(Guid.Parse(productId));
-            if(product == null)
+            var product = await _productRepository.GetProductById(Guid.Parse(productId));
+            if (product == null)
             {
                 throw new ApiException(400, "Product is not exist", "");
             }
             var productDto = _mapper.Map<ProductDto>(product);
-            var listImage = await _imageRepository.GetAllByProduct(Guid.Parse(productId));
-            foreach (var image in listImage)
+            foreach (var image in product.ProductImages)
             {
                 productDto.listImage.Add(image.Url);
             }
@@ -119,7 +114,16 @@ namespace shoe_shop_be.Services
         public async Task<List<ProductDto>> SearchProduct(string search)
         {
             var searchProduct = await _productRepository.GetBySearch(search);
-            var listProductDto = _mapper.Map<List<ProductDto>>(searchProduct);
+            var listProductDto = new List<ProductDto>();
+            foreach (var product in searchProduct)
+            {
+                var productDto = _mapper.Map<ProductDto>(product);
+                foreach (var image in product.ProductImages)
+                {
+                    productDto.listImage.Add(image.Url);
+                }
+                listProductDto.Add(productDto);
+            }
             return listProductDto;
         }
 
@@ -130,40 +134,32 @@ namespace shoe_shop_be.Services
             {
                 throw new ApiException(401, "Unauthorized!!", "");
             }
-            var product = await _productRepository.GetById(Guid.Parse(productId));
-            if(product == null)
+            var product = await _productRepository.GetProductById(Guid.Parse(productId));
+            if (product == null)
             {
                 throw new ApiException(400, "Product is not exist", "");
             }
-            List<string> listImage = new List<string>();
-            if (productModel.listImage.Count() > 0)
+
+            foreach (var image in product.ProductImages)
             {
-                var imageProduct = await _imageRepository.GetAllByProduct(product.Id);
-                foreach(var image  in imageProduct)
-                {
-                    _imageRepository.Delete(image);
-                }
-                foreach (var image in productModel.listImage)
-                {
-                    var result = await _photoService.AddPhotoAsync(image);
-                    if(result.Error != null)
-                    {
-                        throw new ApiException(500, "Image upload fail", "");
-                    }
-                    Images images = new Images();
-                    images.ProductId = product.Id;
-                    images.Url = result.SecureUrl.AbsoluteUri;
-                    await _imageRepository.Insert(images);
-                    listImage.Add(result.SecureUrl.AbsoluteUri);
-                }
+                _imageRepository.Delete(image);
             }
-            product.Name = productModel.Name;
-            product.Price = productModel.Price;
-            product.Type = productModel.Type;
-            product.BrandId = Guid.Parse(productModel.BrandId);
-            product.Description = productModel.Description;
-            product.Gender = productModel.Gender;
-            product.Discount = productModel.Discount;
+            List<string> listImage = new List<string>();
+            foreach (var image in productModel.listImage)
+            {
+                var result = await _photoService.AddPhotoAsync(image);
+                if (result.Error != null)
+                {
+                    throw new ApiException(500, "Image upload fail", "");
+                }
+                Images images = new Images();
+                images.ProductId = product.Id;
+                images.Url = result.SecureUrl.AbsoluteUri;
+                await _imageRepository.Insert(images);
+                listImage.Add(result.SecureUrl.AbsoluteUri);
+            }
+
+            product = _mapper.Map<Product>(productModel);
             _productRepository.Update(product);
             await _productRepository.SaveChange();
             var productDto = _mapper.Map<ProductDto>(product);

@@ -14,7 +14,7 @@ namespace shoe_shop_be.DTO
         [Required]
         public ProductType Type { get; set; }
         [Required]
-        public string BrandId { get; set; }
+        public Guid BrandId { get; set; }
         [Required]
         public string Description { get; set; }
         [Required]

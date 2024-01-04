@@ -13,7 +13,7 @@ namespace shoe_shop_be.Helpers
             CreateMap<User, UserModel>();
             CreateMap<Brands, BrandDto>();
             CreateMap<Product, ProductDto>();
-            CreateMap<Product, ProductModel>();
+            CreateMap<ProductModel, Product>();
             CreateMap<Ships, ShipDto>();
             CreateMap<Likes, LikeDto>();
         }

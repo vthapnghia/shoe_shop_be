@@ -11,9 +11,19 @@ namespace shoe_shop_be.Repositories
         {
         }
 
+        public async Task<List<Product>> GetAllProduct()
+        {
+            return await _dataContext.Products.Where(p => p.IsActive == true).Include(p => p.ProductImages).ToListAsync();
+        }
+
         public async Task<List<Product>> GetBySearch(string search)
         {
-            return await _dataContext.Products.Where(p => p.Name.StartsWith(search) && p.IsActive == true).ToListAsync();
+            return await _dataContext.Products.Where(p => p.Name.StartsWith(search) && p.IsActive == true).Include(p => p.ProductImages).ToListAsync();
+        }
+
+        public async Task<Product?> GetProductById(Guid id)
+        {
+            return await _dataContext.Products.Where(p => p.Id == id && p.IsActive == true).Include(p => p.ProductImages).FirstOrDefaultAsync();
         }
     }
 }
