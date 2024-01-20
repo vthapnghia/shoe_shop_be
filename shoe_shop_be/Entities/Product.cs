@@ -20,5 +20,6 @@ namespace shoe_shop_be.Entities
         public List<Likes> Likes { set; get; } = new List<Likes>();
         public List<DetailProduct> DetailProducts { get; set; } = new List<DetailProduct>();
         public List<Ratings> Ratings { get; set; } = new List<Ratings>();
+        public List<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }

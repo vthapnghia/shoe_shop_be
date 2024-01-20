@@ -15,5 +15,6 @@ namespace shoe_shop_be.Entities
         public DateTime? CreatedAt { get ; set; }
         public string? Secret { get; set; }
         public string? GoogleId { get; set; }
+        public Cart? Cart { get; set; }
     }
 }

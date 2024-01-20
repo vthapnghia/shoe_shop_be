@@ -24,6 +24,7 @@ namespace shoe_shop_be.Controllers
         }
 
         [HttpPost("verify/{id}")]
+        //[Authorize(Roles = "isSeller, isAdmin")]
         public async Task<ActionResult> Verify([FromBody] VerifyModel verifyModel, string id)
         {
             var verify = await _accountService.Verify(verifyModel, id);

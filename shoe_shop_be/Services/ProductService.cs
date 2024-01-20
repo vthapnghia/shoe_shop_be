@@ -158,14 +158,16 @@ namespace shoe_shop_be.Services
                 listImage.Add(result.SecureUrl.AbsoluteUri);
             }
 
-            product.Name = productModel.Name;
+            /*product.Name = productModel.Name;
             product.Price = productModel.Price;
             product.Type = productModel.Type;
             product.BrandId = productModel.BrandId;
             product.Description = productModel.Description;
             product.Gender = productModel.Gender;
             product.Discount = productModel.Discount;
-            _productRepository.Update(product);
+            _productRepository.Update(product);*/
+            _mapper.Map(productModel, product);
+            //_productRepository.Update(product);
             await _productRepository.SaveChange();
             var productDto = _mapper.Map<ProductDto>(product);
             productDto.listImage = listImage;

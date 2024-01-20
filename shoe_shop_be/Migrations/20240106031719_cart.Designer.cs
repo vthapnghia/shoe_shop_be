@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using shoe_shop_be.Data;
 
@@ -11,9 +12,10 @@ using shoe_shop_be.Data;
 namespace shoe_shop_be.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240106031719_cart")]
+    partial class cart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,17 +85,17 @@ namespace shoe_shop_be.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("09fca17a-594b-4b22-98b9-95a6dae3f7e4"),
+                            Id = new Guid("4fb25fe1-d3ad-496f-b9f3-2ac110a2b2cf"),
                             Name = "Addidas"
                         },
                         new
                         {
-                            Id = new Guid("2db6e12b-b4c2-4c64-b6eb-997a656a98c6"),
+                            Id = new Guid("6ada6193-169f-4911-b0cd-30a50f600378"),
                             Name = "Nike"
                         },
                         new
                         {
-                            Id = new Guid("5be78aa4-2697-4213-8709-48579812ede0"),
+                            Id = new Guid("5a9ea9ea-9ab7-49a2-859e-1973f43a6008"),
                             Name = "Converse"
                         });
                 });
@@ -107,23 +109,6 @@ namespace shoe_shop_be.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId")
-                        .IsUnique();
-
-                    b.ToTable("Carts");
-                });
-
-            modelBuilder.Entity("shoe_shop_be.Entities.CartItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CartId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
@@ -135,11 +120,7 @@ namespace shoe_shop_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("CartItem");
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Colors", b =>
@@ -159,17 +140,17 @@ namespace shoe_shop_be.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("0fee4e44-e8f5-45ea-9666-cee556a8c944"),
+                            Id = new Guid("810ced8e-7c20-46c3-bf34-ef6fa9352408"),
                             Name = "red"
                         },
                         new
                         {
-                            Id = new Guid("3d2b1079-6e67-4b9b-a3cf-8a3bd15153fe"),
+                            Id = new Guid("6d866bbb-747c-4445-beae-bdf4e82bd2f1"),
                             Name = "blue"
                         },
                         new
                         {
-                            Id = new Guid("b36b9fe6-6a02-4556-9d29-f82419b59f0c"),
+                            Id = new Guid("db953473-52ef-4600-9413-253fd77eb32c"),
                             Name = "green"
                         });
                 });
@@ -509,17 +490,17 @@ namespace shoe_shop_be.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9eeaa340-da6b-40e3-846c-f2af6a6626c7"),
+                            Id = new Guid("a40f8aed-682c-4f15-80d6-47a6a2eae818"),
                             Name = "40"
                         },
                         new
                         {
-                            Id = new Guid("02725be0-c75d-4a9b-b0ae-bcc0731c9520"),
+                            Id = new Guid("e4f1debc-5efe-4cf8-9737-9bf80175f1f0"),
                             Name = "41"
                         },
                         new
                         {
-                            Id = new Guid("a46c25ce-d113-4ad3-96fd-61c91c28cdd9"),
+                            Id = new Guid("65929ed0-2707-4b8b-a89a-a8f736541924"),
                             Name = "42"
                         });
                 });
@@ -563,36 +544,6 @@ namespace shoe_shop_be.Migrations
                         .HasForeignKey("shoe_shop_be.Entities.Accounts", "UserId");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("shoe_shop_be.Entities.Cart", b =>
-                {
-                    b.HasOne("shoe_shop_be.Entities.Accounts", "Account")
-                        .WithOne("Cart")
-                        .HasForeignKey("shoe_shop_be.Entities.Cart", "AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("shoe_shop_be.Entities.CartItem", b =>
-                {
-                    b.HasOne("shoe_shop_be.Entities.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("shoe_shop_be.Entities.Product", "Product")
-                        .WithMany("CartItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.DetailProduct", b =>
@@ -739,19 +690,9 @@ namespace shoe_shop_be.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("shoe_shop_be.Entities.Accounts", b =>
-                {
-                    b.Navigation("Cart");
-                });
-
             modelBuilder.Entity("shoe_shop_be.Entities.Brands", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("shoe_shop_be.Entities.Cart", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("shoe_shop_be.Entities.Colors", b =>
@@ -766,8 +707,6 @@ namespace shoe_shop_be.Migrations
 
             modelBuilder.Entity("shoe_shop_be.Entities.Product", b =>
                 {
-                    b.Navigation("CartItems");
-
                     b.Navigation("DetailProducts");
 
                     b.Navigation("Likes");

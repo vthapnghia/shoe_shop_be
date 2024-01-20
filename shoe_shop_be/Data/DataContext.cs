@@ -23,6 +23,7 @@ namespace shoe_shop_be.Data
         public DbSet<Ships> Ships { get; set; }
         public DbSet<Sizes> Sizes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Cart> Carts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
